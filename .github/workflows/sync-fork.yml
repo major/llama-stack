@@ -1,0 +1,25 @@
+name: Sync fork with upstream
+
+on:
+  schedule:
+    - cron: '0 6 * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v4
+        with:
+          fetch-depth: 0
+          fetch-tags: true
+
+      - name: Sync with upstream
+        run: |
+          git remote add upstream https://github.com/meta-llama/llama-stack.git
+          git fetch upstream --tags
+          git merge upstream/main --ff-only
+          git push origin main --tags
